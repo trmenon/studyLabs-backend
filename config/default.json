@@ -1,0 +1,12 @@
+{
+    "database": "mongodb+srv://studylabuser:6hcnK5f2lXZCyY7y@study-lab-cluster.a2ylzzo.mongodb.net/?retryWrites=true&w=majority",
+    "server": {
+        "port": 8000
+    },
+    "crypt": {
+        "rounds": 13
+    },
+    "jwt": {
+        "secret": "bdiw5479bnfjeifh985793nflenf8967859060"
+    }
+}
