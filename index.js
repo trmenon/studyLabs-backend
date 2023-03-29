@@ -44,6 +44,7 @@ app.use("/api/v1/subject", router.subjectRouter);
 app.use("/api/v1/class", router.classRouter);
 app.use("/api/v1/asset", router.assetRouter);
 app.use("/api/v1/notes", router.notesRouter);
+app.use("/api/v1/wallet", router.walletRouter);
 
 // HTTP SERVER
 const httpServer = app.listen(PORT, (err)=> {
