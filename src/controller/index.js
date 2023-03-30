@@ -4,6 +4,7 @@ const classController = require('./classController');
 const assetController = require('./assetController');
 const notesController = require('./notesController');
 const walletController = require('./walletController');
+const enrollmentController = require('./enrollmentController');
 
 module.exports = {
     userController,
@@ -11,5 +12,6 @@ module.exports = {
     classController,
     assetController,
     notesController,
-    walletController
+    walletController,
+    enrollmentController
 }

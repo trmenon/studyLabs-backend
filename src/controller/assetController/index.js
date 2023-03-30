@@ -28,7 +28,7 @@ const uploadController = async (req, res) => {
 };
 
 // Getting Stock Media
-const getStockMediaController = (req, res)=> {
+const getMediaController = (req, res)=> {
   try {
     const file = req.params.file;
     const fileLocation = path.join(`${__basedir}/assets/`, file);
@@ -46,5 +46,5 @@ const getStockMediaController = (req, res)=> {
 
 module.exports = {
   uploadController,
-  getStockMediaController,
+  getMediaController,
 }

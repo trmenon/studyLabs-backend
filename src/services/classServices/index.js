@@ -52,7 +52,7 @@ const createNewClass = async (payload)=> {
 // fetch Class by Id [SERVICES]
 const getClassByIdService = async(id)=> {
     try{
-        const _class = await classSchema.findById(id).populate(["handledBy", "subject", "archives"]);
+        const _class = await classSchema.findById(id).populate(["handledBy", "subject", "archives", "enrolled"]);
         if(_class) {
             return { exist: true, data: _class};
         }else {
@@ -67,7 +67,7 @@ const getClassByIdService = async(id)=> {
 // fetch Class by Tutor [SERVICES]
 const getClassByTutorService = async(tutor)=> {
     try{
-        const classList = await classSchema.find({handledBy: tutor}).populate(["handledBy", "subject"]);
+        const classList = await classSchema.find({handledBy: tutor}).populate(["handledBy", "subject", "enrolled"]);
         if(classList) {
             return { count: classList.length, data: classList};
         }else {
@@ -105,6 +105,20 @@ const updateNotesToClassService = async (id, data)=> {
     }
 };
 
+// Update Notes to Class by Id
+const updateEnrollmentToClassService = async (id, data)=> {
+    try {
+        const updatedClass = await classSchema.findByIdAndUpdate(
+            id,
+            { $push: { enrolled: data } },
+        );
+        console.log(updatedClass);
+        return updatedClass;
+    }catch (error) {
+        console.log("[EXCEPTION] pushing  new student enrollment to class");
+    }
+};
+
 module.exports = {
     getAllClassesService,
     getClassByClassTitle,
@@ -112,5 +126,6 @@ module.exports = {
     getClassByIdService,
     updateClassById,
     getClassByTutorService,
-    updateNotesToClassService
+    updateNotesToClassService,
+    updateEnrollmentToClassService
 }

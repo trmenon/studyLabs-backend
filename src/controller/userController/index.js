@@ -1,4 +1,4 @@
-const { userServices }= require('../../services');
+const { userServices, walletServices, enrollmentServices }= require('../../services');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const config = require('config');
@@ -58,7 +58,10 @@ const createTutorUser = async (req,res)=> {
                 isDeleted: false
             };  
             const newUser = await userServices.createNewUser(data);
-            console.log(newUser);
+            const newWallet = await walletServices.createNewWallet({
+                user: newUser?._id,
+                credits: 0,
+            })
             res.status(200).json({
                 success: true, 
                 message: "New user created", 
@@ -99,7 +102,14 @@ const createStudentUser = async (req,res)=> {
                 isDeleted: false
             };  
             const newUser = await userServices.createNewUser(data);
-            console.log(newUser);
+            const newWallet = await walletServices.createNewWallet({
+                user: newUser?._id,
+                credits: 0,
+            })
+            const newEnrollment = await enrollmentServices.createNewEnrollment({
+                student: newUser?._id,
+                classes: [],
+            })
             res.status(200).json({
                 success: true, 
                 message: "New user created", 

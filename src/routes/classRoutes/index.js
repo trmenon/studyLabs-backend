@@ -21,4 +21,7 @@ router.get('/getClassByTutor/:id', requireSignin, classController.getClassByTuto
 // Update notes to class archives
 router.put('/updateNotesToClass/:id/:note', requireSignin, classController.updateNotesToArchiveController);
 
+// Enrollment
+router.put('/enrollStudent', requireSignin, classController.updateClassEnrollmentController)
+
 module.exports = router;

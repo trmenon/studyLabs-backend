@@ -1,4 +1,4 @@
-const { classServices, userServices, notesServices} = require('../../services');
+const { classServices, userServices, notesServices, walletServices, enrollmentServices} = require('../../services');
 
 // Fetch all classes [CONTROLLER]
 const getAllClassesController = async(req, res)=> {
@@ -204,11 +204,119 @@ const updateNotesToArchiveController = async (req, res)=> {
     }
 }
 
+// New enrollment to class
+const updateClassEnrollmentController = async (req, res)=> {
+    // Validation for User
+    const userQuery = await userServices.getUserByIdService(req?.body?.userId);
+    // Validation for Class
+    const classQuery = await classServices.getClassByIdService(req?.body?.classId);
+    try{
+        if(userQuery?.exist === true){
+            if(userQuery?.data?.student === true){
+                if(classQuery?.exist === true) {
+                    // Getting Wallet Information
+                    const walletQuery = await walletServices.getWalletByUserId(userQuery?.data?._id);
+                    const tutorWalletQuery = await walletServices.getWalletByUserId(
+                        classQuery?.data?.handledBy?._id
+                    );
+                    if(walletQuery?.exist === true && tutorWalletQuery?.exist === true){
+                        if(walletQuery?.data?.credits > 9) {
+                            const newStudentCredit = walletQuery?.data?.credits - 10;
+                            const updatedStudentWallet = await walletServices.updateWalletById(
+                                walletQuery?.data?._id,
+                                {credits: newStudentCredit}
+                            );
+                            if(updatedStudentWallet?.updated === true) {
+                                // Crediting to tutor
+                                const updatedTutorWallet = await walletServices.updateWalletById(
+                                    tutorWalletQuery?.data?._id,
+                                    {credits: tutorWalletQuery?.data?.credits + 10}
+                                );
+                                if(updatedTutorWallet?.updated === true) {
+                                    // Run Enrollment to Class
+                                    const updatedClass = await classServices.updateEnrollmentToClassService(
+                                        classQuery?.data?._id,
+                                        userQuery?.data
+                                    );
+                                    // Run Enrollment to student
+                                    const enrollmentQuery = await enrollmentServices.getEnrollmentByUserId(userQuery?.data?._id);
+                                    const updatedEnrollment = await enrollmentServices.updateClassEnrollmentService(
+                                        enrollmentQuery?.data?._id,
+                                        classQuery?.data
+                                    )
+                                    res.status(200).json({
+                                        success: true, 
+                                        message: "Enrollment success", 
+                                        data: {
+                                            student: await userServices.getUserByIdService(userQuery?.data?._id),
+                                            tutor: await userServices.getUserByIdService(classQuery?.data?.handledBy?._id),
+                                            class: await classServices.getClassByIdService(classQuery?.data?._id),
+                                            studentWallet: await walletServices.getWalletByIdService(walletQuery?.data?._id),
+                                            tutorWallet: await walletServices.getWalletByIdService(tutorWalletQuery?.data?._id),
+                                            enrollment: await enrollmentServices.getEnrollmentByUserId(userQuery?.data?._id),
+                                            
+                                        }
+                                    }); 
+                                }
+                            }else {
+                                res.status(200).json({
+                                    success: false, 
+                                    message: "Unable to debit student account at the moment", 
+                                    data: {}
+                                }); 
+                            }
+                        }else {
+                            res.status(200).json({
+                                success: false, 
+                                message: "User does not have enough credits to enroll for the class", 
+                                data: {}
+                            }); 
+                        }
+                    }else {
+                        res.status(200).json({
+                            success: false, 
+                            message: "User does not have a wallet", 
+                            data: {}
+                        }); 
+                    }
+                }else{
+                    res.status(200).json({
+                        success: false, 
+                        message: "Invalid class", 
+                        data: {}
+                    }); 
+                }
+            }else{
+                res.status(200).json({
+                    success: false, 
+                    message: "User does not have permissions to attend classes", 
+                    data: {}
+                }); 
+            }
+        }else {
+            res.status(200).json({
+                success: false, 
+                message: "Invalid user", 
+                data: {}
+            }); 
+        }
+    }catch(err) {
+        console.log('[ERROR:CONTROLLER] New enrollment to class');
+        console.log(err);
+        res.status(200).json({
+            success: false, 
+            message: "Api not acheived", 
+            data: {}
+        }); 
+    }
+}
+
 module.exports = {
     getAllClassesController,
     createNewClassController,
     getClassByIdController,
     toggleClassStatusController,
     getClassByTutorController,
-    updateNotesToArchiveController
+    updateNotesToArchiveController,
+    updateClassEnrollmentController
 }
