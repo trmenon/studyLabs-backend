@@ -4,7 +4,8 @@ const classRouter = require('./classRoutes');
 const assetRouter = require('./assetRoutes');
 const notesRouter = require('./notesRoutes');
 const walletRouter = require('./walletRoutes');
-const enrollmentRouter = require('./enrollmentRoutes')
+const enrollmentRouter = require('./enrollmentRoutes');
+const commonRouter = require('./commonRoutes');
 
 module.exports = {
     userRouter,
@@ -13,5 +14,6 @@ module.exports = {
     assetRouter,
     notesRouter,
     walletRouter,
-    enrollmentRouter
+    enrollmentRouter,
+    commonRouter
 }

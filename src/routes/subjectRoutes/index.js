@@ -12,4 +12,7 @@ router.get("/getAllSubjects", requireSignin, subjectController.getAllSubjectsCon
 // Fetch subject by Id
 router.get("/getSubjectById/:id", requireSignin, subjectController.getSubjectByIdController);
 
+// Fetch subject detailed information with class information as list
+router.get("/getSubjectDetails", requireSignin, subjectController.getSubjectDetailsController);
+
 module.exports = router;

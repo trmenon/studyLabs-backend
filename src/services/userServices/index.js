@@ -76,6 +76,18 @@ const getAllTutorsService = async ()=> {
     }
 }
 
+// Get all users by filter [Services]
+const getAllUsersByFiltersService = async (filters)=> {
+    try {
+        const userList = await userSchema.find(filters);
+        return {count: userList.length, data: userList};
+    } catch (error) {
+        console.log('[ERROR] Fetching all users by filters as list : SERVICE LAYER');
+        console.log(error)
+        return {count: 0, data: []};
+    }
+}
+
 // Update User By Id [Service]
 const updateUserById = async(id, data)=> {
     try {
@@ -94,5 +106,6 @@ module.exports= {
     getUserByIdService,
     getAllUsersService,
     updateUserById,
-    getAllTutorsService
+    getAllTutorsService,
+    getAllUsersByFiltersService
 };

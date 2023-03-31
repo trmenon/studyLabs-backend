@@ -13,6 +13,8 @@ router.post("/createUser/student", userController.createStudentUser);
 router.get("/getAllUsers", requireSignin, userController.getAllUsersController);
 // Get all tutors
 router.get("/getAllTutors", requireSignin, userController.getAllTutorsController);
+// Get all users by filters role
+router.get("/getAllUsersByRole/:role", requireSignin, userController.getUsersByRole);
 // Fetching user details by id
 router.get("/getUserById/:id", requireSignin, userController.getUserByIdController);
 // Deleting user by id

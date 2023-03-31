@@ -1,4 +1,4 @@
-const { subjectServices} = require('../../services');
+const { subjectServices, classServices} = require('../../services');
 
 // Create Subject [Controller]
 const createSubjectController = async (req,res)=> {
@@ -95,8 +95,52 @@ const getSubjectByIdController = async (req, res)=> {
     }    
 }
 
+// Getting all details of subjects [CONTROLLER]
+const getSubjectDetailsController = async (req, res)=> {
+    try{
+        const data = await subjectServices.getAllSubjectsService();
+        if(data && data?.data && Array.isArray(data?.data)){
+            const response = await data?.data.map(async (item)=> {
+                return{
+                    _id: item?._id,
+                    subjectTitle: item?.subjectTitle,
+                    subjectDescription: item?.subjectDescription,
+                    classes: await classServices.getClassBySubjectId(item?._id)
+                }
+            });
+            await Promise.all(response)
+            .then((responseObject)=> {
+                res.status(200).json({
+                    success: true,
+                    message: "surplus inventory count obtained and archived",
+                    data: responseObject
+                });
+            }).catch((errorObject)=> {
+                res.status(200).json({
+                    success: true,
+                    message: "No surplus available at the moment. try again later",
+                    data: []
+                });
+            });
+        }else {
+            res.status(200).json({
+                success: false, 
+                message: "Call not acheived", 
+                data: {}
+            });
+        }
+    }catch(err){
+        res.status(200).json({
+            success: false, 
+            message: "Call not acheived", 
+            data: {}
+        });
+    }
+}
+
 module.exports = {
     createSubjectController,
     getAllSubjectsController,
     getSubjectByIdController,
+    getSubjectDetailsController
 }

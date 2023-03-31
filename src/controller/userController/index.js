@@ -243,6 +243,48 @@ const getAllTutorsController = async(req, res)=> {
     }
 }
 
+// fetching all users by user role [ CONTROLLER]
+const getUsersByRole = async(req, res)=> {
+    try{
+        if(req?.params?.role){
+            let filterload = {};
+            if(req.params?.role !== 'all') {
+                filterload = {tutor: false, admin: false, student: false};
+                if(req.params?.role === 'admin') {
+                    filterload = {...filterload, admin: true}
+                }
+                if(req.params?.role === 'tutor') {
+                    filterload = {...filterload, tutor: true}
+                }
+                if(req.params?.role === 'student') {
+                    filterload = {...filterload, student: true}
+                }
+            }
+            // Call to services layer
+            const responseData = await userServices.getAllUsersByFiltersService(filterload);
+            res.status(200).json({
+                success: true, 
+                message: "Users as per filters have been archived", 
+                data: responseData
+            });
+        }else {
+            res.status(200).json({
+                success: false, 
+                message: "Role not requested", 
+                data: {}
+            });
+        }
+    }catch(err) {
+        console.log('[ERROR: CONTROLLER] Fetching users filtered by role');
+        console.log(err);
+        res.status(200).json({
+            success: false, 
+            message: "Call not acheived", 
+            data: {}
+        });
+    }
+}
+
 // Fetching User by ID [CONTROLLER]
 const getUserByIdController = async (req, res)=> {
     try {
@@ -328,5 +370,6 @@ module.exports= {
     getUserByIdController,
     getAllUsersController,
     markUserAsDeletedById,
-    getAllTutorsController
+    getAllTutorsController,
+    getUsersByRole
 }

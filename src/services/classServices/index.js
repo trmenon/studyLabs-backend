@@ -28,6 +28,22 @@ const getClassByClassTitle = async (classTitle)=> {
     }    
 };
 
+// Get Class by Subject ID [SERVICES]
+const getClassBySubjectId = async (subject)=> {
+    const classList = await classSchema.find({subject: subject});
+    try {
+        if(classList){
+            return{count: classList.length, data: classList};
+        }else {
+            return{count: 0, data: []};
+        }
+    }catch(err){
+        console.log("[ERROR] Getting class by subject id");
+        console.log(err);
+        return{count: 0, data: []};
+    }    
+};
+
 // Create New Class [SERVICES]
 const createNewClass = async (payload)=> {
     const data = {...payload, enrolled: [], archives: [], isActive: true};
@@ -127,5 +143,6 @@ module.exports = {
     updateClassById,
     getClassByTutorService,
     updateNotesToClassService,
-    updateEnrollmentToClassService
+    updateEnrollmentToClassService,
+    getClassBySubjectId
 }
